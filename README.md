@@ -1,13 +1,19 @@
 # 🪄 CSV to Figma Variables Converter
 
-A sleek Next.js application that transforms CSV files into Figma-compatible variable files with mode support.
+A sleek Next.js application that transforms CSV files into Figma-compatible variable files with dark/light mode support.
 
 ## ✨ Features
 
 - 📊 CSV file processing
+- 🌓 Dark/Light mode support
 - ⚡️ Built with Next.js 15
 - 🎨 Beautiful UI with Tailwind CSS
 - 🔄 Real-time conversion
+- 📱 Responsive design
+
+## 🚀 Getting Started
+
+1. Clone the repository:
 
 ## 📜 Available Scripts
 
@@ -31,3 +37,7 @@ Each script performs the following:
 - `build`: Creates an optimized production build
 - `start`: Runs the application in production mode
 - `lint`: Runs ESLint to check for code quality and style issues
+
+## 🔌 Figma Integration
+
+Use the Figma plugin ["Design Tokens Manager"](https://www.figma.com/community/plugin/1304950195326660815/design-tokens-manager) to import the generated JSON files into Figma as variables.
