@@ -5,29 +5,11 @@ import { useDropzone } from "react-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
 import Papa from "papaparse";
 import JSZip from "jszip";
-import { Upload, FileJson, Download, Eye, WandSparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
-import JsonPreview from "@/components/json-preview";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-  SelectContent,
-} from "@/components/ui/select";
 import confetti from "canvas-confetti";
-import { EXAMPLE_FILES } from "../lib/exampleFiles"; // Importing the outsourced example files
-
+import FileCard from "@/components/FileCard";
+import FileSelector from "./FileSelector";
+import ProcessedFiles from "@/components/ProcessedFiles";
 interface ProcessedData {
   modesKey: string[];
   modes: string[];
@@ -36,7 +18,7 @@ interface ProcessedData {
 }
 
 export default function CSVProcessor() {
-  const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
+  const [csvHeaders, setCsvHeaders] = useState<string[]>([]); // Ensure it's initialized as an empty array
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [modesKey, setModesKey] = useState<string[]>([]);
   const [processedData, setProcessedData] = useState<ProcessedData | null>(
@@ -207,189 +189,38 @@ export default function CSVProcessor() {
           <AnimatePresence mode="wait">
             {!selectedFile ? (
               <motion.div
-                key="dropzone"
+                key="no-file-selected"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="space-y-6"
               >
-                <div
-                  className={`border-2 border-dotted hover:bg-gray-100 dark:hover:bg-gray-800  rounded-lg p-12 text-center transition-all ${
-                    isDragActive
-                      ? "border-primary bg-primary/5"
-                      : "border-gray-300 hover:border-gray-400 cursor-pointer"
-                  }`}
-                >
-                  <div {...getRootProps()}>
-                    <input {...getInputProps()} />
-                    <Upload className="mx-auto h-10 w-10 text-gray-400" />
-                    <p className="mt-4 text-md text-gray-600 dark:text-gray-300">
-                      {isDragActive
-                        ? "Drop the CSV file here"
-                        : "Drag and drop a CSV file here, or click to select"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="text-center">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                    Or try an example:
-                  </p>
-                  <div className="flex gap-4 justify-center">
-                    {EXAMPLE_FILES.map((exampleFile) => (
-                      <div
-                        key={exampleFile.path}
-                        className="border rounded-lg p-2 bg-gray-50 dark:bg-gray-800"
-                      >
-                        <div className="flex flex-col gap-2">
-                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {exampleFile.name}
-                          </p>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={async () => {
-                                try {
-                                  const response = await fetch(
-                                    exampleFile.path
-                                  );
-                                  const blob = await response.blob();
-                                  const csvFile = new File(
-                                    [blob],
-                                    exampleFile.path.split("/").pop() ||
-                                      "example.csv",
-                                    { type: "text/csv" }
-                                  );
-                                  analyzeHeaders(csvFile);
-                                } catch (error) {
-                                  console.error(
-                                    "Error loading example file:",
-                                    error
-                                  );
-                                  toast.error("Failed to load example file");
-                                }
-                              }}
-                            >
-                              <FileJson className="h-4 w-4 mr-2" />
-                              {exampleFile.path.split("/").pop()}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={async () => {
-                                try {
-                                  const response = await fetch(
-                                    exampleFile.path
-                                  );
-                                  const blob = await response.blob();
-                                  const url = window.URL.createObjectURL(blob);
-                                  const a = document.createElement("a");
-                                  a.href = url;
-                                  a.download =
-                                    exampleFile.path.split("/").pop() ||
-                                    "example.csv";
-                                  document.body.appendChild(a);
-                                  a.click();
-                                  document.body.removeChild(a);
-                                  window.URL.revokeObjectURL(url);
-                                } catch (error) {
-                                  console.error(
-                                    "Error downloading example file:",
-                                    error
-                                  );
-                                  toast.error(
-                                    "Failed to download example file"
-                                  );
-                                }
-                              }}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <FileSelector
+                  analyzeHeaders={analyzeHeaders}
+                  isDragActive={isDragActive}
+                  getRootProps={getRootProps}
+                  getInputProps={getInputProps}
+                />
               </motion.div>
             ) : (
               <motion.div
-                key="selected-file"
+                key="file-selected"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <Card className="p-6">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <FileJson className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium">Selected File</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {selectedFile.name}
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedFile(null);
-                          setCsvHeaders([]);
-                          setModesKey([]);
-                          setProcessedData(null);
-                        }}
-                      >
-                        Change File
-                      </Button>
-                    </div>
-
-                    {csvHeaders.length > 0 && (
-                      <div className="space-y-4 pt-4 border-t">
-                        <div>
-                          <label className="block text-sm font-medium mb-2">
-                            Select Mode
-                          </label>
-                          <Select
-                            value={modesKey[0] || ""}
-                            onValueChange={(value) => setModesKey([value])}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a column" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {csvHeaders.map((header) => (
-                                <SelectItem key={header} value={header}>
-                                  {header}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {modesKey.length > 0 && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <Button
-                              onClick={handleProcessCSV}
-                              className="w-full"
-                            >
-                              <WandSparkles className="h-4 w-4 mr-2" />
-                              Process CSV
-                            </Button>
-                          </motion.div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </Card>
+                <FileCard
+                  selectedFile={selectedFile}
+                  csvHeaders={csvHeaders}
+                  modesKey={modesKey}
+                  setModesKey={setModesKey}
+                  handleProcessCSV={handleProcessCSV}
+                  resetFileSelection={() => {
+                    setSelectedFile(null);
+                    setCsvHeaders([]);
+                    setModesKey([]);
+                    setProcessedData(null);
+                  }}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -398,140 +229,11 @@ export default function CSVProcessor() {
 
       <AnimatePresence>
         {processedData && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-6"
-          >
-            <Card className="p-6">
-              <h2 className="text-2xl font-semibold mb-4">Processed Files</h2>
-              <ScrollArea className="h-[400px] rounded-md border p-4">
-                <div className="space-y-2">
-                  {/* Manifest preview */}
-                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <span className="font-medium">manifest.json</span>
-                    <div className="flex gap-2">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            <Eye className="h-4 w-4 mr-2" />
-                            Preview
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-[800px] w-[90vw] max-h-[80vh] flex flex-col top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-                          <DialogTitle className="mb-2 pt-2">
-                            manifest.json
-                          </DialogTitle>
-                          <div className="flex-1 overflow-auto">
-                            <JsonPreview data={processedData.manifest} />
-                          </div>
-                          <DialogClose asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="self-end mt-2"
-                            >
-                              Close
-                            </Button>
-                          </DialogClose>
-                        </DialogContent>
-                      </Dialog>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const blob = new Blob(
-                            [JSON.stringify(processedData.manifest, null, 2)],
-                            { type: "application/json" }
-                          );
-                          const url = window.URL.createObjectURL(blob);
-                          const a = document.createElement("a");
-                          a.href = url;
-                          a.download = "manifest.json";
-                          document.body.appendChild(a);
-                          a.click();
-                          document.body.removeChild(a);
-                          window.URL.revokeObjectURL(url);
-                        }}
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Mode previews */}
-                  {processedData.modes.map((mode, index) => (
-                    <div
-                      key={`mode-${mode}-${index}`}
-                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                    >
-                      <span className="font-medium">{mode}</span>
-                      <div className="flex gap-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Eye className="h-4 w-4 mr-2" />
-                              Preview
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-[800px] w-[90vw] max-h-[80vh] flex flex-col top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-                            <DialogTitle className="mb-2 pt-2">{`${modesKey[0]}.${mode}.tokens.json`}</DialogTitle>
-                            <div className="flex-1 overflow-auto">
-                              <JsonPreview
-                                data={
-                                  processedData.jsonFiles[
-                                    `${modesKey[0]}.${mode}.tokens.json`
-                                  ]
-                                }
-                              />
-                            </div>
-                            <DialogClose asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="self-end mt-2"
-                              >
-                                Close
-                              </Button>
-                            </DialogClose>
-                          </DialogContent>
-                        </Dialog>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const fileName = `${modesKey[0]}.${mode}.tokens.json`;
-                            const content = processedData.jsonFiles[fileName];
-                            const blob = new Blob(
-                              [JSON.stringify(content, null, 2)],
-                              { type: "application/json" }
-                            );
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement("a");
-                            a.href = url;
-                            a.download = fileName;
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
-                            window.URL.revokeObjectURL(url);
-                          }}
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-              <Button onClick={downloadZip} className="w-full mt-4">
-                <Download className="h-4 w-4 mr-2" />
-                Download all files (zip)
-              </Button>
-            </Card>
-
-            <div className="flex justify-center"></div>
-          </motion.div>
+          <ProcessedFiles
+            processedData={processedData}
+            modesKey={modesKey}
+            downloadZip={downloadZip}
+          />
         )}
       </AnimatePresence>
     </div>
