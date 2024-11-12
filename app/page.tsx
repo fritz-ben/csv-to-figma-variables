@@ -9,8 +9,7 @@ export default function Home() {
             CSV to Figma variables 🪄
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
-            Upload your CSV file to generate mode-specific JSON files and
-            manifest
+            Magic converter: From CSV to Figma design tokens in one click.
           </p>
         </div>
         <CSVProcessor />

@@ -1,0 +1,5 @@
+Language,Product_Id,Name,Category,Description,Stock,Rating,Brand,Color
+English,1001,Coffee Machine,Kitchen Appliances,Premium coffee maker with timer,45,4.5,BrewMaster,Silver
+German,1001,Kaffeemaschine,Küchengeräte,Premium Kaffeemaschine mit Timer,45,4.5,BrewMaster,Silber
+French,1001,Machine à café,Appareils de cuisine,Machine à café haut de gamme avec minuterie,45,4.5,BrewMaster,Argenté
+Spanish,1001,Cafetera,Electrodomésticos,Cafetera premium con temporizador,45,4.5,BrewMaster,Plateado

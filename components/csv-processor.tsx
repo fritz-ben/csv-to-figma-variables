@@ -183,6 +183,18 @@ export default function CSVProcessor() {
     setModesKey(keys);
   };
 
+  // Add near the top of your component
+  const EXAMPLE_FILES = [
+    {
+      name: "Event participants",
+      path: "/participants.csv",
+    },
+    {
+      name: "Translations",
+      path: "/translations.csv",
+    },
+  ];
+
   return (
     <div className="space-y-8">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -194,20 +206,106 @@ export default function CSVProcessor() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
-                  isDragActive
-                    ? "border-primary bg-primary/5"
-                    : "border-gray-300 hover:border-primary cursor-pointer"
-                }`}
+                className="space-y-6"
               >
-                <div {...getRootProps()}>
-                  <input {...getInputProps()} />
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                  <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-                    {isDragActive
-                      ? "Drop the CSV file here"
-                      : "Drag and drop a CSV file here, or click to select"}
+                <div
+                  className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+                    isDragActive
+                      ? "border-primary bg-primary/5"
+                      : "border-gray-300 hover:border-primary cursor-pointer"
+                  }`}
+                >
+                  <div {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                      {isDragActive
+                        ? "Drop the CSV file here"
+                        : "Drag and drop a CSV file here, or click to select"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                    Or try an example:
                   </p>
+                  <div className="flex gap-4 justify-center">
+                    {EXAMPLE_FILES.map((exampleFile) => (
+                      <div
+                        key={exampleFile.path}
+                        className="border rounded-lg p-2 bg-gray-50 dark:bg-gray-800"
+                      >
+                        <div className="flex flex-col gap-2">
+                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {exampleFile.name}
+                          </p>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(
+                                    exampleFile.path
+                                  );
+                                  const blob = await response.blob();
+                                  const csvFile = new File(
+                                    [blob],
+                                    exampleFile.path.split("/").pop() ||
+                                      "example.csv",
+                                    { type: "text/csv" }
+                                  );
+                                  analyzeHeaders(csvFile);
+                                } catch (error) {
+                                  console.error(
+                                    "Error loading example file:",
+                                    error
+                                  );
+                                  toast.error("Failed to load example file");
+                                }
+                              }}
+                            >
+                              <FileJson className="h-4 w-4 mr-2" />
+                              {exampleFile.path.split("/").pop()}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(
+                                    exampleFile.path
+                                  );
+                                  const blob = await response.blob();
+                                  const url = window.URL.createObjectURL(blob);
+                                  const a = document.createElement("a");
+                                  a.href = url;
+                                  a.download =
+                                    exampleFile.path.split("/").pop() ||
+                                    "example.csv";
+                                  document.body.appendChild(a);
+                                  a.click();
+                                  document.body.removeChild(a);
+                                  window.URL.revokeObjectURL(url);
+                                } catch (error) {
+                                  console.error(
+                                    "Error downloading example file:",
+                                    error
+                                  );
+                                  toast.error(
+                                    "Failed to download example file"
+                                  );
+                                }
+                              }}
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             ) : (
@@ -305,7 +403,7 @@ export default function CSVProcessor() {
               <h2 className="text-2xl font-semibold mb-4">Processed Files</h2>
               <ScrollArea className="h-[400px] rounded-md border p-4">
                 <div className="space-y-4">
-                  {/* Add manifest preview at the top */}
+                  {/* Manifest preview */}
                   <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <span className="font-medium">manifest.json</span>
                     <div className="flex gap-2">
@@ -318,15 +416,35 @@ export default function CSVProcessor() {
                         </DialogTrigger>
                         <DialogContent className="max-w-[800px] w-[90vw] max-h-[80vh] flex flex-col top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
                           <DialogTitle>manifest.json</DialogTitle>
-                          <div className="grid gap-4">
+                          <div className="flex-1 overflow-auto">
                             <JsonPreview data={processedData.manifest} />
                           </div>
                         </DialogContent>
                       </Dialog>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const blob = new Blob(
+                            [JSON.stringify(processedData.manifest, null, 2)],
+                            { type: "application/json" }
+                          );
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = "manifest.json";
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                          window.URL.revokeObjectURL(url);
+                        }}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
 
-                  {/* Existing mode previews */}
+                  {/* Mode previews */}
                   {processedData.modes.map((mode, index) => (
                     <div
                       key={`mode-${mode}-${index}`}
@@ -354,6 +472,28 @@ export default function CSVProcessor() {
                             </div>
                           </DialogContent>
                         </Dialog>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const fileName = `${modesKey[0]}.${mode}.tokens.json`;
+                            const content = processedData.jsonFiles[fileName];
+                            const blob = new Blob(
+                              [JSON.stringify(content, null, 2)],
+                              { type: "application/json" }
+                            );
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = fileName;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                          }}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                   ))}
