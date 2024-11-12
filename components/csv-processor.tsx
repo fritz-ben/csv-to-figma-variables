@@ -232,7 +232,6 @@ export default function CSVProcessor() {
                           setModesKey([]);
                           setProcessedData(null);
                         }}
-                        className="hover:bg-destructive hover:text-destructive-foreground"
                       >
                         Change File
                       </Button>
