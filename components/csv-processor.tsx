@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogTrigger,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 import JsonPreview from "@/components/json-preview";
 import { toast } from "sonner";
@@ -25,6 +26,7 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import confetti from "canvas-confetti";
+import { EXAMPLE_FILES } from "../lib/exampleFiles"; // Importing the outsourced example files
 
 interface ProcessedData {
   modesKey: string[];
@@ -76,7 +78,6 @@ export default function CSVProcessor() {
       "text/csv": [".csv"],
     },
     multiple: false,
-    disabled: false, // No longer needs to be disabled initially
   });
 
   // Step 2: Process full CSV when user clicks process button
@@ -198,23 +199,6 @@ export default function CSVProcessor() {
 
     toast.success("Files downloaded successfully!");
   };
-
-  const handleModesKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const keys = e.target.value.split(",").map((key) => key.trim());
-    setModesKey(keys);
-  };
-
-  // Add near the top of your component
-  const EXAMPLE_FILES = [
-    {
-      name: "Event participants",
-      path: "/participants.csv",
-    },
-    {
-      name: "Translations",
-      path: "/translations.csv",
-    },
-  ];
 
   return (
     <div className="space-y-8">
@@ -436,10 +420,21 @@ export default function CSVProcessor() {
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="max-w-[800px] w-[90vw] max-h-[80vh] flex flex-col top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-                          <DialogTitle>manifest.json</DialogTitle>
+                          <DialogTitle className="mb-2 pt-2">
+                            manifest.json
+                          </DialogTitle>
                           <div className="flex-1 overflow-auto">
                             <JsonPreview data={processedData.manifest} />
                           </div>
+                          <DialogClose asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="self-end mt-2"
+                            >
+                              Close
+                            </Button>
+                          </DialogClose>
                         </DialogContent>
                       </Dialog>
                       <Button
@@ -481,7 +476,7 @@ export default function CSVProcessor() {
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-[800px] w-[90vw] max-h-[80vh] flex flex-col top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-                            <DialogTitle>{`${modesKey[0]}.${mode}.tokens.json`}</DialogTitle>
+                            <DialogTitle className="mb-2 pt-2">{`${modesKey[0]}.${mode}.tokens.json`}</DialogTitle>
                             <div className="flex-1 overflow-auto">
                               <JsonPreview
                                 data={
@@ -491,6 +486,15 @@ export default function CSVProcessor() {
                                 }
                               />
                             </div>
+                            <DialogClose asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="self-end mt-2"
+                              >
+                                Close
+                              </Button>
+                            </DialogClose>
                           </DialogContent>
                         </Dialog>
                         <Button
