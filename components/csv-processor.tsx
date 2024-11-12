@@ -229,7 +229,7 @@ export default function CSVProcessor() {
                       <div className="space-y-4 pt-4 border-t">
                         <div>
                           <label className="block text-sm font-medium mb-2">
-                            Select Collection Column
+                            Select Mode Column
                           </label>
                           <select
                             value={modesKey[0] || ""}
