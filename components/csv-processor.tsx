@@ -27,21 +27,34 @@ interface ProcessedData {
 }
 
 export default function CSVProcessor() {
+  const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [modesKey, setModesKey] = useState<string[]>([]);
   const [processedData, setProcessedData] = useState<ProcessedData | null>(
     null
   );
-  const [collectionName, setCollectionName] = useState("New Collection");
 
+  // Step 1: Analyze headers
+  const analyzeHeaders = (file: File) => {
+    Papa.parse(file, {
+      preview: 1, // Read only first line
+      complete: (results) => {
+        if (results.data && results.data.length > 0) {
+          // Get headers from first row
+          const headers = Object.keys(results.data[0]);
+          setCsvHeaders(headers);
+          setSelectedFile(file);
+        }
+      },
+      header: true,
+    });
+  };
+
+  // Modified onDrop to only analyze headers
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
-      Papa.parse(file, {
-        complete: (results) => {
-          processCSV(results.data);
-        },
-        header: true,
-      });
+      analyzeHeaders(file);
     }
   };
 
@@ -51,11 +64,25 @@ export default function CSVProcessor() {
       "text/csv": [".csv"],
     },
     multiple: false,
-    disabled: !collectionName || modesKey.length === 0,
+    disabled: false, // No longer needs to be disabled initially
   });
 
+  // Step 2: Process full CSV when user clicks process button
+  const handleProcessCSV = () => {
+    if (selectedFile && modesKey.length > 0) {
+      Papa.parse(selectedFile, {
+        complete: (results) => {
+          processCSV(results.data);
+        },
+        header: true,
+      });
+    }
+  };
+
   const processCSV = (data: any[]) => {
-    // Get unique names (modes) using the first modesKey
+    const collectionName = modesKey[0];
+
+    // Get unique names (modes) using the modesKey
     const uniqueNames = Array.from(
       new Set(data.map((row) => row[modesKey[0]]))
     );
@@ -139,59 +166,89 @@ export default function CSVProcessor() {
         transition={{ duration: 0.5 }}
       >
         <div className="space-y-4">
-          <div>
-            <label
-              htmlFor="collectionName"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+          {/* Only show drop zone if no file is selected */}
+          {!selectedFile && (
+            <div
+              {...getRootProps()}
+              className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+                isDragActive
+                  ? "border-primary bg-primary/5"
+                  : "border-gray-300 hover:border-primary cursor-pointer"
+              }`}
             >
-              Collection name
-            </label>
-            <Input
-              id="collectionName"
-              type="text"
-              value={collectionName}
-              onChange={(e) => setCollectionName(e.target.value)}
-              className="w-full"
-            />
-          </div>
+              <input {...getInputProps()} />
+              <Upload className="mx-auto h-12 w-12 text-gray-400" />
+              <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                {isDragActive
+                  ? "Drop the CSV file here"
+                  : "Drag and drop a CSV file here, or click to select"}
+              </p>
+            </div>
+          )}
 
-          <div>
-            <label
-              htmlFor="modesKey"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
-              Which column contains the modes?
-            </label>
-            <Input
-              id="modesKey"
-              type="text"
-              placeholder="e.g. Language or Theme"
-              value={modesKey.join(", ")}
-              onChange={handleModesKeyChange}
-              className="w-full"
-            />
-          </div>
+          {/* Show file selection status when file is selected */}
+          {selectedFile && (
+            <Card className="p-6">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <FileJson className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">Selected File</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedFile.name}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedFile(null);
+                      setCsvHeaders([]);
+                      setModesKey([]);
+                      setProcessedData(null);
+                    }}
+                    className="hover:bg-destructive hover:text-destructive-foreground"
+                  >
+                    Change File
+                  </Button>
+                </div>
 
-          <div
-            {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
-              isDragActive
-                ? "border-primary bg-primary/5"
-                : !collectionName || modesKey.length === 0
-                ? "border-gray-300 bg-gray-100 cursor-not-allowed opacity-50"
-                : "border-gray-300 hover:border-primary cursor-pointer"
-            }`}
-          >
-            <input {...getInputProps()} />
-            <Upload className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-              {!collectionName || modesKey.length === 0
-                ? "Please fill in Collection name and Modes Keys first"
-                : isDragActive
-                ? "Drop the CSV file here"
-                : "Drag and drop a CSV file here, or click to select"}
-            </p>
-          </div>
+                {csvHeaders.length > 0 && (
+                  <div className="space-y-4 pt-4 border-t">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Select Collection Column
+                      </label>
+                      <select
+                        value={modesKey[0] || ""}
+                        onChange={(e) => setModesKey([e.target.value])}
+                        className="w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background 
+                          placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                      >
+                        <option value="">Select a column</option>
+                        {csvHeaders.map((header) => (
+                          <option key={header} value={header}>
+                            {header}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {modesKey.length > 0 && (
+                      <Button onClick={handleProcessCSV} className="w-full">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Process CSV
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
         </div>
       </motion.div>
 
@@ -229,7 +286,7 @@ export default function CSVProcessor() {
                               <JsonPreview
                                 data={
                                   processedData.jsonFiles[
-                                    `${collectionName}.${mode}.tokens.json`
+                                    `${modesKey[0]}.${mode}.tokens.json`
                                   ]
                                 }
                               />
@@ -243,8 +300,8 @@ export default function CSVProcessor() {
               </ScrollArea>
             </Card>
 
-            <div className="flex justify-center gap-4">
-              <Button onClick={downloadZip} className="w-full max-w-xs">
+            <div className="flex justify-center">
+              <Button onClick={downloadZip} className="w-full">
                 <Download className="h-4 w-4 mr-2" />
                 Download All Files (ZIP)
               </Button>
