@@ -96,6 +96,14 @@ export default function CSVProcessor() {
     const allNames = data.map((row) => row[modesKey[0]]).filter(Boolean);
     const uniqueNames = Array.from(new Set(allNames));
 
+    // Check for numeric mode keys
+    const numericModes = uniqueNames.filter((name) => !isNaN(Number(name)));
+    if (numericModes.length > 0) {
+      toast.warning("Numeric mode keys detected", {
+        description: `Using numbers as mode keys in Figma is not recommended. Please use semantic names instead.`,
+      });
+    }
+
     // Check for duplicates
     if (allNames.length !== uniqueNames.length) {
       const duplicates = allNames.filter(
