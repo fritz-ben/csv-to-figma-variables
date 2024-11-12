@@ -520,14 +520,13 @@ export default function CSVProcessor() {
                   ))}
                 </div>
               </ScrollArea>
-            </Card>
-
-            <div className="flex justify-center">
-              <Button onClick={downloadZip} className="w-full">
+              <Button onClick={downloadZip} className="w-full mt-4">
                 <Download className="h-4 w-4 mr-2" />
                 Download All Files (ZIP)
               </Button>
-            </div>
+            </Card>
+
+            <div className="flex justify-center"></div>
           </motion.div>
         )}
       </AnimatePresence>
