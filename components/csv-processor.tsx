@@ -522,7 +522,7 @@ export default function CSVProcessor() {
               </ScrollArea>
               <Button onClick={downloadZip} className="w-full mt-4">
                 <Download className="h-4 w-4 mr-2" />
-                Download All Files (ZIP)
+                Download all files (zip)
               </Button>
             </Card>
 
