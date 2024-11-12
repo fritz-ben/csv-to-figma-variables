@@ -169,7 +169,8 @@ export default function CSVProcessor() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "processed-files.zip";
+    const zipName = selectedFile?.name.replace(".csv", "") || "processed-files";
+    a.download = `${zipName}.zip`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
