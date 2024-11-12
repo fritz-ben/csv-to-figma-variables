@@ -24,6 +24,7 @@ import {
   SelectItem,
   SelectContent,
 } from "@/components/ui/select";
+import confetti from "canvas-confetti";
 
 interface ProcessedData {
   modesKey: string[];
@@ -139,6 +140,13 @@ export default function CSVProcessor() {
       modes: uniqueNames,
       jsonFiles,
       manifest,
+    });
+
+    // Add confetti effect
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
     });
 
     toast.success("CSV processed successfully!");
@@ -308,7 +316,7 @@ export default function CSVProcessor() {
                             Preview
                           </Button>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent className="max-w-[800px] w-[90vw] max-h-[80vh] flex flex-col top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
                           <DialogTitle>manifest.json</DialogTitle>
                           <div className="grid gap-4">
                             <JsonPreview data={processedData.manifest} />
@@ -333,9 +341,9 @@ export default function CSVProcessor() {
                               Preview
                             </Button>
                           </DialogTrigger>
-                          <DialogContent>
+                          <DialogContent className="max-w-[800px] w-[90vw] max-h-[80vh] flex flex-col top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
                             <DialogTitle>{`${modesKey[0]}.${mode}.tokens.json`}</DialogTitle>
-                            <div className="grid gap-4">
+                            <div className="flex-1 overflow-auto">
                               <JsonPreview
                                 data={
                                   processedData.jsonFiles[
