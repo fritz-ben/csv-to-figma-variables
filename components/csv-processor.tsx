@@ -407,7 +407,7 @@ export default function CSVProcessor() {
             <Card className="p-6">
               <h2 className="text-2xl font-semibold mb-4">Processed Files</h2>
               <ScrollArea className="h-[400px] rounded-md border p-4">
-                <div className="space-y-4">
+                <div className="space-y-2">
                   {/* Manifest preview */}
                   <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <span className="font-medium">manifest.json</span>
