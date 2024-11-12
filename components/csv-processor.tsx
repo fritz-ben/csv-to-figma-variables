@@ -264,6 +264,28 @@ export default function CSVProcessor() {
               <h2 className="text-2xl font-semibold mb-4">Processed Files</h2>
               <ScrollArea className="h-[400px] rounded-md border p-4">
                 <div className="space-y-4">
+                  {/* Add manifest preview at the top */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <span className="font-medium">manifest.json</span>
+                    <div className="flex gap-2">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Eye className="h-4 w-4 mr-2" />
+                            Preview
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogTitle>manifest.json</DialogTitle>
+                          <div className="grid gap-4">
+                            <JsonPreview data={processedData.manifest} />
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </div>
+
+                  {/* Existing mode previews */}
                   {processedData.modes.map((mode, index) => (
                     <div
                       key={`mode-${mode}-${index}`}
@@ -279,9 +301,7 @@ export default function CSVProcessor() {
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
-                            <DialogTitle className="sr-only">
-                              CSV Processing Results
-                            </DialogTitle>
+                            <DialogTitle>{`${modesKey[0]}.${mode}.tokens.json`}</DialogTitle>
                             <div className="grid gap-4">
                               <JsonPreview
                                 data={
