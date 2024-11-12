@@ -92,30 +92,36 @@ export default function CSVProcessor() {
 
   const processCSV = (data: any[]) => {
     const collectionName = modesKey[0];
-
-    // Get unique names (modes) using the modesKey
     const uniqueNames = Array.from(
       new Set(data.map((row) => row[modesKey[0]]))
-    );
+    ).filter(Boolean);
 
-    // Generate JSON files for each mode
     const jsonFiles: { [key: string]: any } = {};
     uniqueNames.forEach((name) => {
       const modeData = data.filter((row) => row[modesKey[0]] === name);
       const processedModeData = modeData.reduce((acc: any, row: any) => {
+        if (
+          !Object.values(row).some((value) => value !== "" && value != null)
+        ) {
+          return acc;
+        }
+
         Object.entries(row).forEach(([key, value]) => {
-          acc[key] = {
-            $value: value,
-            $type: typeof value === "number" ? "number" : "string",
-          };
+          if (value !== "" && value != null) {
+            acc[key] = {
+              $value: value,
+              $type: typeof value === "number" ? "number" : "string",
+            };
+          }
         });
         return acc;
       }, {});
 
-      jsonFiles[`${collectionName}.${name}.tokens.json`] = processedModeData;
+      if (Object.keys(processedModeData).length > 0) {
+        jsonFiles[`${collectionName}.${name}.tokens.json`] = processedModeData;
+      }
     });
 
-    // Generate manifest
     const manifest = {
       name: collectionName,
       collections: {
