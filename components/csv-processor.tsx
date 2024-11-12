@@ -238,8 +238,8 @@ export default function CSVProcessor() {
                 >
                   <div {...getRootProps()}>
                     <input {...getInputProps()} />
-                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                    <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                    <Upload className="mx-auto h-10 w-10 text-gray-400" />
+                    <p className="mt-4 text-md text-gray-600 dark:text-gray-300">
                       {isDragActive
                         ? "Drop the CSV file here"
                         : "Drag and drop a CSV file here, or click to select"}
