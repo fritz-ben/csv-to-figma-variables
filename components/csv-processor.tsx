@@ -93,9 +93,21 @@ export default function CSVProcessor() {
 
   const processCSV = (data: any[]) => {
     const collectionName = modesKey[0];
-    const uniqueNames = Array.from(
-      new Set(data.map((row) => row[modesKey[0]]))
-    ).filter(Boolean);
+    const allNames = data.map((row) => row[modesKey[0]]).filter(Boolean);
+    const uniqueNames = Array.from(new Set(allNames));
+
+    // Check for duplicates
+    if (allNames.length !== uniqueNames.length) {
+      const duplicates = allNames.filter(
+        (name, index) => allNames.indexOf(name) !== index
+      );
+      const uniqueDuplicates = Array.from(new Set(duplicates));
+      toast.warning("Duplicate mode keys detected", {
+        description: `Only the last occurrence of each key will be processed. For example: ${uniqueDuplicates.join(
+          ", "
+        )}`,
+      });
+    }
 
     const jsonFiles: { [key: string]: any } = {};
     uniqueNames.forEach((name) => {

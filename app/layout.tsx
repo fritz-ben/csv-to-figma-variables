@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { DM_Sans, Syne } from "next/font/google";
+import { Toaster } from "sonner";
 
 const syne = Syne({
   subsets: ["latin"],
@@ -24,7 +25,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${dmSans.variable} ${syne.variable}`}>{children}</body>
+      <body className={`${dmSans.variable} ${syne.variable}`}>
+        {children}
+        <Toaster expand={true} />
+      </body>
     </html>
   );
 }
