@@ -29,7 +29,7 @@ const ProcessedFiles: React.FC<ProcessedFilesProps> = ({
 }) => {
   return (
     <Card className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Processed Files</h2>
+      <h3 className="text-xl font-semibold mb-4">Processed Files</h3>
       <ScrollArea className="h-[400px] rounded-md border p-4">
         <div className="space-y-2">
           {/* Manifest preview */}
