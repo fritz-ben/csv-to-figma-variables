@@ -230,10 +230,10 @@ export default function CSVProcessor() {
                 className="space-y-6"
               >
                 <div
-                  className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+                  className={`border-2 border-dotted hover:bg-gray-100 dark:hover:bg-gray-800  rounded-lg p-12 text-center transition-all ${
                     isDragActive
                       ? "border-primary bg-primary/5"
-                      : "border-gray-300 hover:border-primary cursor-pointer"
+                      : "border-gray-300 hover:border-gray-400 cursor-pointer"
                   }`}
                 >
                   <div {...getRootProps()}>
