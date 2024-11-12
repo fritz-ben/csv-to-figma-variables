@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import JsonPreview from "@/components/json-preview";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
 
 interface ProcessedData {
   modesKey: string[];
@@ -39,9 +38,14 @@ export default function CSVProcessor() {
     Papa.parse(file, {
       preview: 1, // Read only first line
       complete: (results) => {
-        if (results.data && results.data.length > 0) {
-          // Get headers from first row
-          const headers = Object.keys(results.data[0]);
+        if (
+          results.data &&
+          Array.isArray(results.data) &&
+          results.data.length > 0
+        ) {
+          // Type assertion since we know the first row is an object
+          const firstRow = results.data[0] as Record<string, unknown>;
+          const headers = Object.keys(firstRow);
           setCsvHeaders(headers);
           setSelectedFile(file);
         }
