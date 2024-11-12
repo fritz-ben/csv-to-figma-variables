@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
 import Papa from "papaparse";
 import JSZip from "jszip";
-import { Upload, FileJson, Download, Eye } from "lucide-react";
+import { Upload, FileJson, Download, Eye, WandSparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -397,7 +397,7 @@ export default function CSVProcessor() {
                               onClick={handleProcessCSV}
                               className="w-full"
                             >
-                              <Upload className="h-4 w-4 mr-2" />
+                              <WandSparkles className="h-4 w-4 mr-2" />
                               Process CSV
                             </Button>
                           </motion.div>
