@@ -17,6 +17,13 @@ import {
 } from "@/components/ui/dialog";
 import JsonPreview from "@/components/json-preview";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectItem,
+  SelectContent,
+} from "@/components/ui/select";
 
 interface ProcessedData {
   modesKey: string[];
@@ -231,19 +238,21 @@ export default function CSVProcessor() {
                           <label className="block text-sm font-medium mb-2">
                             Select Mode Column
                           </label>
-                          <select
+                          <Select
                             value={modesKey[0] || ""}
-                            onChange={(e) => setModesKey([e.target.value])}
-                            className="w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background 
-                              placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                            onValueChange={(value) => setModesKey([value])}
                           >
-                            <option value="">Select a column</option>
-                            {csvHeaders.map((header) => (
-                              <option key={header} value={header}>
-                                {header}
-                              </option>
-                            ))}
-                          </select>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a column" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {csvHeaders.map((header) => (
+                                <SelectItem key={header} value={header}>
+                                  {header}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
 
                         {modesKey.length > 0 && (
