@@ -37,14 +37,14 @@ const FileCard: React.FC<FileCardProps> = ({
               <FileJson className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="font-medium">Selected File</h3>
+              <h3 className="font-medium">Source</h3>
               <p className="text-sm text-muted-foreground">
-                {selectedFile?.name}
+                {selectedFile ? selectedFile.name : "Pasted csv data"}
               </p>
             </div>
           </div>
           <Button variant="outline" size="sm" onClick={resetFileSelection}>
-            Change File
+            Change Input
           </Button>
         </div>
 

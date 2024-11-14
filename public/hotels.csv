@@ -1,0 +1,12 @@
+Hotel,Hotel description,Room,Room description,Available rooms,Status,From,To,Breakfast,Price per night,Price total,Local tax,Local tax type,Local tax amount,Assigned to
+Hilton,Luxuriöses Hotel im Stadtzentrum,Standard,Komfortables Zimmer mit Blick auf die Stadt,10,Available,2025-03-09,2025-03-11,TRUE,150,300,TRUE,absolute,3€,John Doe
+Ritz,Elegantes Hotel mit erstklassigem Service,Delux,Geräumiges Zimmer mit Balkon,0,Unavailable,2025-03-10,2025-03-12,FALSE,250,0,FALSE,,,Jane Smith
+Motel One,Modernes und preiswertes Hotel,Budget,"Klein, aber gemütlich",394,Available,2025-03-15,2025-03-17,TRUE,80,160,TRUE,relative,2%,Alice Brown
+Hilton,Luxuriöses Hotel im Stadtzentrum,Master Suite,Exklusive Suite mit privatem Pool,216,Available,2025-03-20,2025-03-22,TRUE,500,1000,TRUE,absolute,4€,Bob White
+Ritz,Elegantes Hotel mit erstklassigem Service,Premium,Hochwertiges Zimmer mit Kingsize-Bett,32,Available,2025-03-25,2025-03-27,FALSE,300,600,FALSE,,,Sarah Black
+Motel One,Modernes und preiswertes Hotel,Standard,"Klein, aber gemütlich",3,Available,2025-04-01,2025-04-03,TRUE,90,270,TRUE,relative,2%,Liam Grey
+Hilton,Luxuriöses Hotel im Stadtzentrum,Deluxe,Geräumiges Zimmer mit Blick auf den Park,0,Unavailable,2025-04-05,2025-04-07,TRUE,200,400,TRUE,absolute,5€,Olivia Blue
+Ritz,Elegantes Hotel mit erstklassigem Service,Suite,Luxuriöse Suite mit Meerblick,0,Unavailable,2025-04-10,2025-04-12,FALSE,350,0,FALSE,,,Emma Stone
+Motel One,Modernes und preiswertes Hotel,Budget,"Klein, aber gemütlich",42,Available,2025-04-15,2025-04-17,TRUE,75,150,TRUE,relative,2%,Chris Green
+Hilton,Luxuriöses Hotel im Stadtzentrum,Standard,Komfortables Zimmer mit Blick auf die Stadt,84,Available,2025-04-20,2025-04-22,TRUE,160,320,TRUE,absolute,4€,James Red
+Ritz,Elegantes Hotel mit erstklassigem Service,Premium,Hochwertiges Zimmer mit Kingsize-Bett,49,Available,2025-04-25,2025-04-27,FALSE,280,560,FALSE,,,Alice Brown
